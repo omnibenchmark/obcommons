@@ -15,7 +15,7 @@ for f in "$@"; do
   fi
 
   tmp=$(mktemp -d)
-  # ponytail: blobless bare clone — cheap for module repos, and unlike fetch-by-sha
+  # Blobless bare clone — cheap for module repos, and unlike fetch-by-sha
   # it works with short commits. Swap to a forge API if some repo's history gets huge.
   if git clone --quiet --bare --filter=blob:none "$url" "$tmp/repo" 2>/dev/null &&
     git -C "$tmp/repo" cat-file -e "${commit}^{commit}" 2>/dev/null; then

@@ -24,6 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # ponytail: checks every entry, not just the changed ones. Filter on the PR
+      # Checks every entry, not just the changed ones. Filter on the PR
       # diff when this stops being seconds.
       - run: bash scripts/check-repos.sh modules/*.yaml

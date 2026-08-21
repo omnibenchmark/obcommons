@@ -1,6 +1,6 @@
 import { execSync } from 'node:child_process';
 
-// ponytail: one `git log` per file at build time. Fine for hundreds of modules;
+// One `git log` per file at build time. Fine for hundreds of modules;
 // parse a single `git log --name-only` pass if it ever shows up in build times.
 const cache = new Map();
 
