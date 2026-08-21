@@ -5,6 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Pages needs "Source: GitHub Actions" set once in the repo settings.
 permissions:
   contents: read
   pages: write
@@ -20,10 +21,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-      - uses: withastro/action@v3
+          fetch-depth: 0 # git history is where the "updated" dates come from
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
 
   deploy:
     needs: build

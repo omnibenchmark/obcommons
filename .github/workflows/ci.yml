@@ -19,6 +19,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build # the Zod schema is the PR gate: a bad entry fails here
+      - name: registry is not empty
+        run: test "$(jq length dist/modules.json)" -gt 0
 
   repos:
     runs-on: ubuntu-latest

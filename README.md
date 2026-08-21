@@ -22,3 +22,10 @@ npm run build   # also validates every entry against the schema
 
 Astro + Tailwind. `src/content.config.ts` holds the schema — it is the only place
 the entry format is defined.
+
+## License
+
+GPL-3.0-or-later. Copyright (C) 2026 omnibenchmark contributors.
+
+The module metadata in `modules/` describes third-party repositories; each module
+carries its own license, recorded in its entry.
