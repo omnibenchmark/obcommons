@@ -1,0 +1,16 @@
+name: omni-huggingface
+description: >
+  Fetches datasets or model weights into the shared Hugging Face cache, then
+  materialises them at the paths the benchmark declares. Writes a manifest
+  instead of copying when the declared output ends in .json, so heavy weights
+  are not duplicated per node.
+repository:
+  url: https://github.com/omnibenchmark/omni-huggingface.git
+  commit: dd042df5
+stage: data
+category: generic
+tags: [download, huggingface, models]
+authors:
+  - name: omnibenchmark
+    github: omnibenchmark
+license: MIT

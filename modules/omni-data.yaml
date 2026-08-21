@@ -1,0 +1,15 @@
+name: omni-data
+description: >
+  Hapiq-backed dataset download. Fetches from GEO, Zenodo, Figshare, SRA/ENA,
+  Ensembl, CZI VCP, scPerturb, BioStudies and HCA into the canonical output
+  directory, with filtering by extension, size and filename pattern.
+repository:
+  url: https://github.com/btraven00/omni-data.git
+  commit: b4d6c62d
+stage: data
+category: generic
+tags: [download, data-acquisition, geo, zenodo]
+authors:
+  - name: btraven00
+    github: btraven00
+license: MIT

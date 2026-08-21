@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { formatDate, updatedAt } from '../../lib/updated.js';
+import { href } from '../../lib/url.js';
+
+export async function getStaticPaths() {
+  const modules = await getCollection('modules');
+  return modules.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const m = entry.data;
+const repo = m.repository.url.replace(/\.git$/, '');
+const commitUrl = /github\.com|gitlab\.com/.test(repo) ? `${repo}/commit/${m.repository.commit}` : repo;
+
+const snippet = [
+  `- id: ${entry.id}`,
+  `  software_environment: <your-env>`,
+  `  repository:`,
+  `    url: ${m.repository.url}`,
+  `    commit: ${m.repository.commit}`,
+].join('\n');
+
+const facts = [
+  ['Category', m.category],
+  ['License', m.license],
+  ['Benchmarks', m.benchmarks?.join(', ')],
+  ['Environments', m.environments?.join(', ')],
+  ['Inputs', m.inputs?.join(', ')],
+  ['Outputs', m.outputs?.join(', ')],
+  ['Entry updated', formatDate(updatedAt(entry.id))],
+];
+---
+
+<Base title={m.name} description={m.description}>
+  <a href={href('/')} class="text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">&larr; all modules</a>
+
+  <div class="mt-4 flex flex-wrap items-center gap-3">
+    <h1 class="text-3xl font-semibold tracking-tight">{m.name}</h1>
+    <span class="rounded-md bg-zinc-100 px-2 py-0.5 font-mono text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">{m.stage}</span>
+  </div>
+  <p class="mt-1 font-mono text-sm text-zinc-500 dark:text-zinc-400">{entry.id}</p>
+
+  <p class="mt-6 max-w-2xl text-zinc-700 dark:text-zinc-300">{m.description}</p>
+
+  <div class="mt-4 flex flex-wrap gap-1.5">
+    {m.tags.map((t) => (
+      <a
+        href={href(`/tags/${t}/`)}
+        class="rounded-full px-2.5 py-1 text-xs font-medium text-zinc-600 ring-1 ring-zinc-200 ring-inset hover:bg-zinc-100 dark:text-zinc-300 dark:ring-zinc-700 dark:hover:bg-zinc-800"
+      >
+        {t}
+      </a>
+    ))}
+  </div>
+
+  <div class="mt-8 grid gap-8 sm:grid-cols-3">
+    <dl class="divide-y divide-zinc-200 border-y border-zinc-200 text-sm sm:col-span-2 dark:divide-zinc-800 dark:border-zinc-800">
+      <div class="flex gap-4 py-3">
+        <dt class="w-32 shrink-0 text-zinc-500 dark:text-zinc-400">Repository</dt>
+        <dd class="min-w-0 break-all">
+          <a href={repo} class="underline underline-offset-4">{repo.replace(/^https?:\/\//, '')}</a>
+          <a href={commitUrl} class="ml-2 font-mono text-xs text-zinc-500 underline underline-offset-4 dark:text-zinc-400">
+            {m.repository.commit}
+          </a>
+        </dd>
+      </div>
+      <div class="flex gap-4 py-3">
+        <dt class="w-32 shrink-0 text-zinc-500 dark:text-zinc-400">Authors</dt>
+        <dd>
+          {m.authors.map((a, i) => (
+            <>
+              {i > 0 && ', '}
+              {a.github ? <a href={`https://github.com/${a.github}`} class="underline underline-offset-4">{a.name}</a> : a.name}
+            </>
+          ))}
+        </dd>
+      </div>
+      {facts.filter(([, v]) => v).map(([k, v]) => (
+        <div class="flex gap-4 py-3">
+          <dt class="w-32 shrink-0 text-zinc-500 dark:text-zinc-400">{k}</dt>
+          <dd class="min-w-0 break-words">{v}</dd>
+        </div>
+      ))}
+      {m.homepage && (
+        <div class="flex gap-4 py-3">
+          <dt class="w-32 shrink-0 text-zinc-500 dark:text-zinc-400">Homepage</dt>
+          <dd class="min-w-0 break-all"><a href={m.homepage} class="underline underline-offset-4">{m.homepage}</a></dd>
+        </div>
+      )}
+    </dl>
+
+    <div>
+      <h2 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Use it</h2>
+      <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">Drop this into a stage of your benchmark YAML.</p>
+      <pre class="mt-3 overflow-x-auto rounded-lg bg-zinc-900 p-4 font-mono text-xs text-zinc-100 dark:bg-zinc-800"><code>{snippet}</code></pre>
+    </div>
+  </div>
+</Base>

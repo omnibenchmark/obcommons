@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ModuleCard from '../../components/ModuleCard.astro';
+import { href } from '../../lib/url.js';
+
+export async function getStaticPaths() {
+  const modules = await getCollection('modules');
+  const tags = [...new Set(modules.flatMap((m) => m.data.tags))];
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { tag, entries: modules.filter((m) => m.data.tags.includes(tag)) },
+  }));
+}
+
+const { tag, entries } = Astro.props;
+---
+
+<Base title={tag}>
+  <a href={href('/')} class="text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">&larr; all modules</a>
+  <h1 class="mt-4 text-3xl font-semibold tracking-tight">{tag}</h1>
+  <p class="mt-2 text-zinc-600 dark:text-zinc-400">{entries.length} module{entries.length === 1 ? '' : 's'}</p>
+  <div class="mt-6 grid gap-4 sm:grid-cols-2">
+    {entries.map((entry) => <ModuleCard entry={entry} />)}
+  </div>
+</Base>

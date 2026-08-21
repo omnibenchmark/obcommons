@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # git history is where the "updated" dates come from
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build # the Zod schema is the PR gate: a bad entry fails here
+
+  repos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # ponytail: checks every entry, not just the changed ones. Filter on the PR
+      # diff when this stops being seconds.
+      - run: bash scripts/check-repos.sh modules/*.yaml

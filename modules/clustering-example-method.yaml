@@ -1,0 +1,18 @@
+name: Clustering example method
+description: >
+  Reference method module from the omnibenchmark example benchmark. Reads a
+  count matrix plus metadata and writes a cluster assignment, so it is the
+  smallest working example of a methods-stage module.
+repository:
+  url: https://github.com/omnibenchmark-example/method.git
+  commit: 8f2f835
+stage: methods
+category: biofx
+benchmarks: [clustering-example]
+tags: [clustering, example]
+authors:
+  - name: omnibenchmark
+    github: omnibenchmark
+license: MIT
+inputs: [data.counts, data.meta]
+outputs: [methods.mapping]

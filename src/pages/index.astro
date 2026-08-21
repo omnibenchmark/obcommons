@@ -1,0 +1,120 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ModuleCard from '../components/ModuleCard.astro';
+import { facetsOf } from '../lib/filter.js';
+
+const modules = (await getCollection('modules')).sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+const counts = new Map();
+for (const m of modules) for (const f of facetsOf(m.data)) counts.set(f, (counts.get(f) ?? 0) + 1);
+
+// One chip mechanism, four groups. A group with a single value filters nothing — drop it.
+const groups = ['category', 'stage', 'benchmark', 'tag']
+  .map((group) => [
+    group,
+    [...counts.entries()]
+      .filter(([f]) => f.startsWith(`${group}:`))
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])),
+  ])
+  .filter(([, values]) => values.length > 1);
+---
+
+<Base>
+  <h1 class="text-3xl font-semibold tracking-tight">Modules</h1>
+  <p class="mt-2 max-w-2xl text-zinc-600 dark:text-zinc-400">
+    Reusable omnibenchmark modules, contributed by the community. Open a pull request to add yours.
+  </p>
+
+  <div class="mt-8 space-y-4">
+    <input
+      id="q"
+      type="search"
+      placeholder="Search modules…"
+      autocomplete="off"
+      class="w-full rounded-lg border border-zinc-200 bg-white px-4 py-2.5 text-sm outline-none placeholder:text-zinc-400 focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:focus:border-zinc-600"
+    />
+
+    {groups.map(([group, values]) => (
+      <div class="flex flex-wrap items-baseline gap-1.5">
+        <span class="w-20 shrink-0 text-xs text-zinc-400 dark:text-zinc-500">{group}</span>
+        {values.map(([facet, count]) => (
+          <button
+            type="button"
+            data-chip={facet}
+            aria-pressed="false"
+            class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium text-zinc-600 ring-1 ring-zinc-200 ring-inset transition hover:bg-zinc-100 aria-pressed:bg-zinc-900 aria-pressed:text-white aria-pressed:ring-zinc-900 dark:text-zinc-300 dark:ring-zinc-700 dark:hover:bg-zinc-800 dark:aria-pressed:bg-zinc-100 dark:aria-pressed:text-zinc-900 dark:aria-pressed:ring-zinc-100"
+          >
+            {facet.slice(group.length + 1)}<span class="opacity-60">{count}</span>
+          </button>
+        ))}
+      </div>
+    ))}
+
+    <p id="count" class="text-sm text-zinc-500 dark:text-zinc-400">{modules.length} modules</p>
+  </div>
+
+  <div class="mt-6 grid gap-4 sm:grid-cols-2">
+    {modules.map((entry) => <ModuleCard entry={entry} />)}
+  </div>
+
+  <p id="empty" hidden class="mt-6 text-zinc-500 dark:text-zinc-400">
+    No modules match. <button type="button" id="reset" class="underline underline-offset-4">Clear filters</button>
+  </p>
+</Base>
+
+<script>
+  import { matches } from '../lib/filter.js';
+
+  const input = document.getElementById('q');
+  const chips = [...document.querySelectorAll('[data-chip]')];
+  const cards = [...document.querySelectorAll('[data-card]')];
+  const count = document.getElementById('count');
+  const empty = document.getElementById('empty');
+
+  const active = () => chips.filter((c) => c.ariaPressed === 'true').map((c) => c.dataset.chip);
+
+  function apply(push = true) {
+    const q = input.value;
+    const facets = active();
+    let shown = 0;
+    for (const card of cards) {
+      const hit = matches(
+        { haystack: card.dataset.haystack, facets: card.dataset.facets.split(' ') },
+        q,
+        facets,
+      );
+      card.hidden = !hit;
+      shown += hit ? 1 : 0;
+    }
+    count.textContent = shown === cards.length ? `${shown} modules` : `${shown} of ${cards.length} modules`;
+    empty.hidden = shown > 0;
+
+    if (!push) return;
+    const params = new URLSearchParams();
+    if (q.trim()) params.set('q', q.trim());
+    if (facets.length) params.set('f', facets.join(','));
+    const qs = params.toString();
+    history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
+  }
+
+  const params = new URLSearchParams(location.search);
+  input.value = params.get('q') ?? '';
+  const wanted = (params.get('f') ?? '').split(',').filter(Boolean);
+  for (const chip of chips) chip.ariaPressed = String(wanted.includes(chip.dataset.chip));
+
+  input.addEventListener('input', () => apply());
+  for (const chip of chips) {
+    chip.addEventListener('click', () => {
+      chip.ariaPressed = chip.ariaPressed === 'true' ? 'false' : 'true';
+      apply();
+    });
+  }
+  document.getElementById('reset').addEventListener('click', () => {
+    input.value = '';
+    for (const chip of chips) chip.ariaPressed = 'false';
+    apply();
+  });
+
+  apply(false);
+</script>
