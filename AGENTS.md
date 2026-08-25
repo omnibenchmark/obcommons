@@ -21,6 +21,7 @@ modules/<id>.yaml          # the registry — the only thing contributors touch
 src/
   content.config.ts        # collection + Zod schema — the single definition of the entry format
   lib/filter.js            # matches() / facetsOf() / haystackOf(), shared by index page and test
+  lib/pinned.js            # the curated pin list + byPin() sort — maintainers only
   lib/updated.js           # "last updated", read from git
   lib/url.js               # href() — prefixes the GitHub Pages base path
   layouts/Base.astro
@@ -56,6 +57,12 @@ bash scripts/check-repos.sh modules/*.yaml
   `facetsOf()` decides what is filterable; add a group there and the index page picks it up.
 - **`node --test <dir>` does not traverse directories on node 22.** The test script globs
   `src/lib/*.test.js` for that reason.
+- **Pinning is a maintainer list, not a schema field.** `src/lib/pinned.js` holds module ids
+  in display order; they sort first on the index and get a badge. Keeping it out of the entry
+  schema is the point — a contributor cannot pin their own module in a pull request.
+- **Pagination hides, it does not split.** Every card is still server-rendered; the index
+  script shows 12 at a time, so search and chips span the whole registry and the full list
+  works with JavaScript off. Astro's `paginate()` is the upgrade when payload starts to matter.
 - **Filtering is server-rendered plus 40 lines of DOM code.** The full list works without
   JavaScript. Keep it that way — do not reach for a framework or a search index at this size.
 

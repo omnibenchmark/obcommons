@@ -2,9 +2,11 @@
 import { facetsOf, haystackOf } from '../lib/filter.js';
 import { formatDate, updatedAt } from '../lib/updated.js';
 import { href } from '../lib/url.js';
+import { pinned } from '../lib/pinned.js';
 
 const { entry } = Astro.props;
 const m = entry.data;
+const isPinned = pinned.includes(entry.id);
 const updated = formatDate(updatedAt(entry.id));
 ---
 
@@ -20,9 +22,14 @@ const updated = formatDate(updatedAt(entry.id));
         {m.name}
       </a>
     </h3>
-    <span class="shrink-0 rounded-md bg-zinc-100 px-2 py-0.5 font-mono text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-      {m.stage}
-    </span>
+    <div class="flex shrink-0 items-center gap-1.5">
+      {isPinned && (
+        <span title="Pinned by the maintainers" class="rounded-md bg-amber-100 px-2 py-0.5 text-xs text-amber-700 dark:bg-amber-950 dark:text-amber-400">pinned</span>
+      )}
+      <span class="rounded-md bg-zinc-100 px-2 py-0.5 font-mono text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+        {m.stage}
+      </span>
+    </div>
   </div>
 
   <p class="mt-2 line-clamp-3 text-sm text-zinc-600 dark:text-zinc-400">{m.description}</p>
