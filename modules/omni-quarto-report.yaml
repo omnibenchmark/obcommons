@@ -1,0 +1,20 @@
+name: omni-quarto-report
+description: >
+  Terminal gather collector that renders a Quarto/Rmd template over whatever
+  the gather collected. Benchmark-agnostic: the template comes from the plan,
+  the data from the gather, and the two meet through a manifest.json listing
+  input paths and lineage.
+repository:
+  url: https://github.com/omnibenchmark/omni-quarto-report.git
+  commit: 1b90c98
+stage: report
+requires: 0.7.0
+category: generic
+tags: [report, quarto, gather, visualization]
+authors:
+  - name: omnibenchmark
+    github: omnibenchmark
+license: MIT
+inputs: [gather.manifest]
+outputs: [report.html]
+environments: [conda]

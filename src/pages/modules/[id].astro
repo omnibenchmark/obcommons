@@ -25,6 +25,7 @@ const snippet = [
 const facts = [
   ['Category', m.category],
   ['License', m.license],
+  ['Requires', m.requires && `omnibenchmark >= ${m.requires}`],
   ['Benchmarks', m.benchmarks?.join(', ')],
   ['Environments', m.environments?.join(', ')],
   ['Inputs', m.inputs?.join(', ')],

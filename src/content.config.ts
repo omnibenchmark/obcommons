@@ -14,6 +14,8 @@ const modules = defineCollection({
       commit: z.string().min(4),
     }),
     stage: z.string().min(1), // free string: stages are benchmark-defined
+    // Minimum omnibenchmark version the module needs, e.g. "0.7.0".
+    requires: z.string().regex(/^\d+\.\d+(\.\d+)?$/, 'requires must be a version like 0.7.0').optional(),
     // Extend the enum when a third kind of module actually shows up.
     category: z.enum(['generic', 'biofx']).default('generic'),
     benchmarks: z.array(z.string().regex(slug)).optional(),

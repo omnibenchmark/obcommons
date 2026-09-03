@@ -11,6 +11,7 @@ repository:                        # required
   url: https://github.com/me/my-module.git
   commit: 8f2f835                  # a commit or a tag — CI checks it resolves
 stage: methods                     # required: data | process | methods | metrics | …
+requires: "0.7.0"                  # optional: minimum omnibenchmark version
 category: biofx                    # generic (reusable anywhere) or biofx (task-specific)
 tags: [clustering, single-cell]    # required, lowercase-kebab
 authors:                           # required
