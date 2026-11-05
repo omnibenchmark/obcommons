@@ -1,0 +1,23 @@
+name: omni-sklearn-metrics
+description: >
+  Declarative metrics module over scikit-learn: each entry of its catalog names a sklearn
+  function, the data type of each argument (partition, labels, embedding, scores, values),
+  its fixed kwargs, direction and range; the `run` entrypoint resolves it at runtime, so a new
+  metric is one catalog entry. The plan picks metrics with `metric: "ari,nmi"` and maps
+  function arguments to plan inputs with `bind: "labels_true=…,labels_pred=…"`. The published
+  catalog.json carries the module pin for tools such as plan builders.
+repository:
+  url: https://github.com/btraven00/omni-sklearn-metrics.git
+  commit: 81e2acf
+stage: metrics
+requires: 0.8.0
+category: generic
+tags: [metrics, sklearn, clustering, classification, regression, gather]
+authors:
+  - name: btraven00
+    github: btraven00
+license: MIT
+homepage: https://btraven00.github.io/omni-sklearn-metrics/
+inputs: [bind, metric]
+outputs: [metrics.jsonl]
+environments: [conda]
