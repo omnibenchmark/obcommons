@@ -5,7 +5,7 @@ description: >
   directory, with filtering by extension, size and filename pattern.
 repository:
   url: https://github.com/btraven00/omni-data.git
-  commit: b4d6c62d
+  commit: 8df4cc8
 stage: data
 category: generic
 tags: [download, data-acquisition, geo, zenodo]
