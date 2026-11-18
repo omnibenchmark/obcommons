@@ -3,10 +3,11 @@ description: >
   Terminal gather collector that renders a Quarto/Rmd template over whatever
   the gather collected. Benchmark-agnostic: the template comes from the plan,
   the data from the gather, and the two meet through a manifest.json listing
-  input paths and lineage.
+  input paths and lineage. Follows the gather contract of the plan's api
+  version: --from-files and --output from 0.8.0, positional paths on 0.7.0.
 repository:
   url: https://github.com/omnibenchmark/omni-quarto-report.git
-  commit: 1b90c98
+  commit: 492c767
 stage: report
 requires: 0.7.0
 category: generic
